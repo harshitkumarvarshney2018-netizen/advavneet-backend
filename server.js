@@ -98,6 +98,10 @@ transporter.sendMail(mailOptions, (error, info) => {
   });            
 });             
 
+app.get("/", (req, res) => {
+  res.send("Adv Avneet Kumar Website Backend Running");
+});
+
 app.listen(5000, () => {
   console.log("Server running on port 5000");
 });
