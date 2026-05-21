@@ -64,7 +64,7 @@ Description: ${description}`
 transporter.sendMail(mailOptions, (error, info) => {
   if (error) {
     console.error("❌ Email failed:", error.message);
-    // Data is already saved in DB, so still return success
+    // Email failed
     return res.status(200).json({ message: "Consultation booked! (Email failed)" });
   } else {
     console.log("✅ Email sent!", info.messageId);
