@@ -47,16 +47,16 @@ app.post("/api/book", (req, res) => {
         to: "harshitkumarvarshney2018@gmail.com", 
         subject: "New Legal Consultation Request",
         text: `You have received a new consultation request from your website!
-        
-        Client Details:
-        Name: ${full_name}
-        Phone: ${phone}
-        Email: ${email}
-        
-        Case Details:
-        Date Requested: ${preferred_date}
-        Case Type: ${case_type}
-        Description: ${description}`
+
+Client Details:
+Name: ${full_name}
+Phone: ${phone}
+Email: ${email}
+
+Case Details:
+Date Requested: ${preferred_date}
+Case Type: ${case_type}
+Description: ${description}`
     };
 
     
