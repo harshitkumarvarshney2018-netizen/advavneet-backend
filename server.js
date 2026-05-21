@@ -42,6 +42,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+/*
 // Add this right after — tells you instantly if Gmail works
 transporter.verify((error, success) => {
   if (error) {
@@ -50,7 +51,7 @@ transporter.verify((error, success) => {
     console.log("✅ Gmail Ready — emails will send!");
   }
 });
-
+*/
 
 
 // This handles the data when someone clicks submit
@@ -83,6 +84,7 @@ app.post("/api/book", (req, res) => {
         Description: ${description}`
     };
 
+    
 // (res is inside sendMail)
 transporter.sendMail(mailOptions, (error, info) => {
   if (error) {
