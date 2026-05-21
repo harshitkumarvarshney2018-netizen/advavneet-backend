@@ -3,35 +3,12 @@ require('dotenv').config();
 console.log("TEST_VAR =", process.env.TEST_VAR);
 
 const express = require("express");
-const mysql = require("mysql2");
 const cors = require("cors");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-
-console.log("MYSQLHOST =", process.env.MYSQLHOST);
-console.log("MYSQLUSER =", process.env.MYSQLUSER);
-console.log("MYSQLDATABASE =", process.env.MYSQLDATABASE);
-console.log("MYSQLPORT =", process.env.MYSQLPORT);
-
-const db = mysql.createConnection({
-  host: process.env.MYSQLHOST,
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
-  database: process.env.MYSQLDATABASE,
-  port: process.env.MYSQLPORT
-});
-
-db.connect((err) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log("Database Connected");
-  }
-});
 
 const nodemailer = require("nodemailer");
 
@@ -50,7 +27,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-/*
+
 // Add this right after — tells you instantly if Gmail works
 transporter.verify((error, success) => {
   if (error) {
@@ -59,22 +36,14 @@ transporter.verify((error, success) => {
     console.log("✅ Gmail Ready — emails will send!");
   }
 });
-*/
+
 
 
 // This handles the data when someone clicks submit
 app.post("/api/book", (req, res) => {
   const { full_name, phone, email, case_type, preferred_date, description } = req.body;
 
-  const sqlQuery = `INSERT INTO consultations_db (full_name, phone, email, case_type, preferred_date, description) VALUES (?, ?, ?, ?, ?, ?)`;
-  const values = [full_name, phone, email, case_type, preferred_date, description];
-
-  db.query(sqlQuery, values, (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send("Database error");
-    }
-
+    
     const mailOptions = {
         from: "harshitadvdatabase@gmail.com",
         to: "harshitkumarvarshney2018@gmail.com", 
@@ -104,9 +73,7 @@ transporter.sendMail(mailOptions, (error, info) => {
     return res.status(200).json({ message: "Consultation booked successfully!" });
   }
 });          // Closes sendMail  
-
-  });            
-});             
+});
 
 app.get("/", (req, res) => {
   res.send("Adv Avneet Kumar Website Backend Running");
