@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+console.log("TEST_VAR =", process.env.TEST_VAR);
+
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
