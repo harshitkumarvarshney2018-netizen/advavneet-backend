@@ -1,7 +1,5 @@
 require('dotenv').config();
 
-console.log("TEST_VAR =", process.env.TEST_VAR);
-
 const express = require("express");
 const cors = require("cors");
 
