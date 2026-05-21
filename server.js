@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-
+/*
 // Add this right after — tells you instantly if Gmail works
 transporter.verify((error, success) => {
   if (error) {
@@ -28,6 +28,7 @@ transporter.verify((error, success) => {
     console.log("✅ Gmail Ready — emails will send!");
   }
 });
+*/
 
 
 
