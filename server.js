@@ -57,7 +57,7 @@ transporter.verify((error, success) => {
 app.post("/api/book", (req, res) => {
   const { full_name, phone, email, case_type, preferred_date, description } = req.body;
 
-  const sqlQuery = `INSERT INTO consultations (full_name, phone, email, case_type, preferred_date, description) VALUES (?, ?, ?, ?, ?, ?)`;
+  const sqlQuery = `INSERT INTO consultations_db (full_name, phone, email, case_type, preferred_date, description) VALUES (?, ?, ?, ?, ?, ?)`;
   const values = [full_name, phone, email, case_type, preferred_date, description];
 
   db.query(sqlQuery, values, (err, result) => {
