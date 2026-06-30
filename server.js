@@ -16,43 +16,24 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const nodemailer = require("nodemailer");
-
-// Set up the email sender
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-secure: true,
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
-
-/*
-// Add this right after — tells you instantly if Gmail works
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("❌ Gmail FAILED:", error.message);
-  } else {
-    console.log("✅ Gmail Ready — emails will send!");
-  }
-});
-*/
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 
 // This handles the data when someone clicks submit
-app.post("/api/book", (req, res) => {
+app.post("/api/book", async (req, res) => {
   const { full_name, phone, email, case_type, preferred_date, description } = req.body;
 
+
     
-    const mailOptions = {
-        from: "harshitadvdatabase@gmail.com",
-        to: "harshitkumarvarshney2018@gmail.com", 
-        subject: "New Legal Consultation Request",
-        text: `You have received a new consultation request from your website!
+// (res is inside sendMail)
+try {
+  await resend.emails.send({
+    from: "onboarding@resend.dev",
+    to: "harshitkumarvarshney2018@gmail.com",
+    subject: "New Legal Consultation Request",
+    text: `You have received a new consultation request.
 
 Client Details:
 Name: ${full_name}
@@ -63,20 +44,18 @@ Case Details:
 Date Requested: ${preferred_date}
 Case Type: ${case_type}
 Description: ${description}`
-    };
+  });
 
-    
-// (res is inside sendMail)
-transporter.sendMail(mailOptions, (error, info) => {
-  if (error) {
-    console.error("❌ Email failed:", error.message);
-    // Email failed
-    return res.status(200).json({ message: "Consultation booked! (Email failed)" });
-  } else {
-    console.log("✅ Email sent!", info.messageId);
-    return res.status(200).json({ message: "Consultation booked successfully!" });
-  }
-});          // Closes sendMail  
+  return res.status(200).json({
+    message: "Consultation booked successfully!"
+  });
+
+} catch (error) {
+  console.error(error);
+  return res.status(500).json({
+    message: "Email failed"
+  });
+}
 });
 
 app.get("/", (req, res) => {
