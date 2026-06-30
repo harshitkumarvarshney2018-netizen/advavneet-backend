@@ -1,81 +1,62 @@
-require('dotenv').config();
-
-process.on("uncaughtException", (err) => {
-  console.error("UNCAUGHT:", err);
-});
-
-process.on("unhandledRejection", (err) => {
-  console.error("REJECTION:", err);
-});
+require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const { Resend } = require("resend");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-const nodemailer = require("nodemailer");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Set up the email sender
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+app.post("/api/book", async (req, res) => {
+  try {
+    const {
+      full_name,
+      phone,
+      email,
+      case_type,
+      preferred_date,
+      description,
+    } = req.body;
 
-/*
-// Add this right after — tells you instantly if Gmail works
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("❌ Gmail FAILED:", error.message);
-  } else {
-    console.log("✅ Gmail Ready — emails will send!");
-  }
-});
-*/
+    const { data, error } = await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: "harshitkumarvarshney2018@gmail.com",
+      subject: "New Legal Consultation Request",
+      text: `
+New Legal Consultation Request
 
-
-
-// This handles the data when someone clicks submit
-app.post("/api/book", (req, res) => {
-  const { full_name, phone, email, case_type, preferred_date, description } = req.body;
-
-    
-    const mailOptions = {
-        from: "harshitadvdatabase@gmail.com",
-        to: "harshitkumarvarshney2018@gmail.com", 
-        subject: "New Legal Consultation Request",
-        text: `You have received a new consultation request from your website!
-
-Client Details:
+Client Details
+--------------
 Name: ${full_name}
 Phone: ${phone}
 Email: ${email}
 
-Case Details:
-Date Requested: ${preferred_date}
+Case Details
+------------
 Case Type: ${case_type}
-Description: ${description}`
-    };
+Preferred Date: ${preferred_date}
+Description: ${description}
+`,
+    });
 
-    
-// (res is inside sendMail)
-transporter.sendMail(mailOptions, (error, info) => {
-  if (error) {
-    console.error("❌ Email failed:", error.message);
-    // Email failed
-    return res.status(200).json({ message: "Consultation booked! (Email failed)" });
-  } else {
-    console.log("✅ Email sent!", info.messageId);
-    return res.status(200).json({ message: "Consultation booked successfully!" });
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Email failed" });
+    }
+
+    console.log("Email sent:", data);
+
+    res.json({
+      message: "Consultation booked successfully!",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server Error" });
   }
-});          // Closes sendMail  
 });
 
 app.get("/", (req, res) => {
