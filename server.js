@@ -17,14 +17,18 @@ app.use(cors());
 app.use(express.json());
 
 const { Resend } = require("resend");
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 
 
 // This handles the data when someone clicks submit
 app.post("/api/book", async (req, res) => {
   const { full_name, phone, email, case_type, preferred_date, description } = req.body;
 
+  const apiKey = (process.env.RESEND_API_KEY || "").trim();
+  console.log("KEY LENGTH:", apiKey.length);
+  if (!apiKey) {
+    return res.status(500).json({ message: "Server email config missing" });
+  }
+  const resend = new Resend(apiKey);
 
     
 // (res is inside sendMail)
