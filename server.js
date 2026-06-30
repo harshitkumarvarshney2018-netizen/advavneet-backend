@@ -23,43 +23,11 @@ const { Resend } = require("resend");
 app.post("/api/book", async (req, res) => {
   const { full_name, phone, email, case_type, preferred_date, description } = req.body;
 
-  const apiKey = (process.env.RESEND_API_KEY || "").trim();
-  console.log("KEY LENGTH:", apiKey.length);
-  if (!apiKey) {
-    return res.status(500).json({ message: "Server email config missing" });
-  }
-  const resend = new Resend(apiKey);
-
-    
-// (res is inside sendMail)
-try {
-  await resend.emails.send({
-    from: "onboarding@resend.dev",
-    to: "harshitkumarvarshney2018@gmail.com",
-    subject: "New Legal Consultation Request",
-    text: `You have received a new consultation request.
-
-Client Details:
-Name: ${full_name}
-Phone: ${phone}
-Email: ${email}
-
-Case Details:
-Date Requested: ${preferred_date}
-Case Type: ${case_type}
-Description: ${description}`
-  });
+  console.log("New booking request:", { full_name, phone, email, case_type, preferred_date, description });
 
   return res.status(200).json({
     message: "Consultation booked successfully!"
   });
-
-} catch (error) {
-  console.error(error);
-  return res.status(500).json({
-    message: "Email failed"
-  });
-}
 });
 
 app.get("/", (req, res) => {
